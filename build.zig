@@ -5,10 +5,12 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     // Create the main library
-    const lib = b.addStaticLibrary(.{
+    const lib = b.addLibrary(.{
         .name = "xcrypt",
-        .target = target,
-        .optimize = optimize,
+        .root_module = b.createModule(.{
+            .target = target,
+            .optimize = optimize,
+        }),
     });
 
     // Generate config.h using addConfigHeader - minimal config
@@ -174,8 +176,10 @@ pub fn build(b: *std.Build) void {
     for (test_programs) |test_prog| {
         const test_exe = b.addExecutable(.{
             .name = test_prog.name,
-            .target = target,
-            .optimize = optimize,
+            .root_module = b.createModule(.{
+                .target = target,
+                .optimize = optimize,
+            }),
         });
 
         test_exe.addCSourceFile(.{
