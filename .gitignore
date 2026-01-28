@@ -40,7 +40,6 @@
 *.T
 /crypt.h
 /crypt.h.stamp
-/crypt-hashes.h
 /crypt-hashes.h.stamp
 /crypt-symbol-vers.h
 /crypt-symbol-vers.h.stamp
