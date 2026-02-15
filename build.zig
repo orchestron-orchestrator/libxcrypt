@@ -30,16 +30,18 @@ pub fn build(b: *std.Build) void {
             .HAVE_LIMITS_H = 1,
             .HAVE_STDBOOL_H = 1,
             .HAVE_STDALIGN_H = 1,
+            .HAVE_SYS_CDEFS_H = 1,
+            .HAVE_SYS_CDEFS_THROW = 1,
 
             // Memory functions
             .HAVE_EXPLICIT_BZERO = null,
             .HAVE_EXPLICIT_MEMSET = null,
-            .HAVE_MEMSET_S = 1,
+            .HAVE_MEMSET_S = null,
 
             // Randomness sources
             .HAVE_GETENTROPY = null,
             .HAVE_GETRANDOM = null,
-            .HAVE_ARC4RANDOM_BUF = 1,
+            .HAVE_ARC4RANDOM_BUF = null,
 
             // Endianness
             .WORDS_BIGENDIAN = 0,
