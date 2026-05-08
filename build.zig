@@ -187,6 +187,18 @@ pub fn build(b: *std.Build) void {
         \\__attribute__((__nothrow__));
         \\extern int crypt_checksalt (const char *__setting);
         \\extern const char *crypt_preferred_method (void);
+        \\#include <stdint.h>
+        \\/* Raw scrypt KDF.  Defined in lib/alg-yescrypt-common.c as crypto_scrypt
+        \\   and renamed to _crypt_crypto_scrypt by crypt-port.h to keep libxcrypt's
+        \\   internal namespace clean; we re-expose the public name via the same
+        \\   #define-then-extern pattern used by crypt-hashes.h.
+        \\   N must be a power of 2 greater than 1; r * p < 2^30.
+        \\   Returns 0 on success, -1 on error.  */
+        \\#define crypto_scrypt _crypt_crypto_scrypt
+        \\extern int crypto_scrypt (const uint8_t *__passwd, size_t __passwdlen,
+        \\                          const uint8_t *__salt, size_t __saltlen,
+        \\                          uint64_t __N, uint32_t __r, uint32_t __p,
+        \\                          uint8_t *__buf, size_t __buflen);
         \\extern char *xcrypt (const char *__phrase, const char *__setting)
         \\__attribute__((__nothrow__));
         \\extern char *xcrypt_r (const char *__phrase, const char *__setting,
