@@ -115,7 +115,7 @@ pub fn build(b: *std.Build) void {
             .PACKAGE_STRING = "libxcrypt 4.5.0",
         },
     );
-    lib.addConfigHeader(config_header);
+    lib.root_module.addConfigHeader(config_header);
 
     // Generate minimal headers for Zig static builds.
     const symver_header_contents =
@@ -221,9 +221,9 @@ pub fn build(b: *std.Build) void {
     const crypt_h = generated_headers.add("crypt.h", crypt_h_contents);
 
     // Add include paths
-    lib.addIncludePath(generated_headers.getDirectory());
-    lib.addIncludePath(b.path("lib"));
-    lib.addIncludePath(b.path("."));
+    lib.root_module.addIncludePath(generated_headers.getDirectory());
+    lib.root_module.addIncludePath(b.path("lib"));
+    lib.root_module.addIncludePath(b.path("."));
 
     // All algorithm sources
     const lib_sources = [_][]const u8{
@@ -285,18 +285,18 @@ pub fn build(b: *std.Build) void {
     };
 
     for (lib_sources) |src| {
-        lib.addCSourceFile(.{
+        lib.root_module.addCSourceFile(.{
             .file = b.path(src),
             .flags = &cflags,
         });
     }
 
-    lib.linkLibC();
+    lib.root_module.link_libc = true;
 
     // Install library and headers
     b.installArtifact(lib);
     lib.installHeader(crypt_h, "crypt.h");
-    lib.installHeader(config_header.getOutput(), "config.h");
+    lib.installHeader(config_header.getOutputFile(), "config.h");
 
     // Minimal test set
     const test_step = b.step("test", "Run minimal tests");
@@ -330,18 +330,18 @@ pub fn build(b: *std.Build) void {
             }),
         });
 
-        test_exe.addCSourceFile(.{
+        test_exe.root_module.addCSourceFile(.{
             .file = b.path(test_prog.source),
             .flags = &test_cflags,
         });
 
-        test_exe.addIncludePath(b.path("lib"));
-        test_exe.addIncludePath(b.path("test"));
-        test_exe.addIncludePath(b.path("."));
-        test_exe.addConfigHeader(config_header);
+        test_exe.root_module.addIncludePath(b.path("lib"));
+        test_exe.root_module.addIncludePath(b.path("test"));
+        test_exe.root_module.addIncludePath(b.path("."));
+        test_exe.root_module.addConfigHeader(config_header);
 
-        test_exe.linkLibrary(lib);
-        test_exe.linkLibC();
+        test_exe.root_module.linkLibrary(lib);
+        test_exe.root_module.link_libc = true;
 
         const run_test = b.addRunArtifact(test_exe);
         run_test.has_side_effects = true;
